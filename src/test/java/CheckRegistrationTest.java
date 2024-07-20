@@ -1,47 +1,38 @@
 import api.UserApi;
 import apidata.User;
-import constants.UrlConstants;
-import changebrowser.Browser;
-import changebrowser.ChoiceBrowserExamples;
 import com.github.javafaker.Faker;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Description;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import pageobject.AuthorizationPage;
 import pageobject.MainPage;
 import pageobject.RegistrationPage;
 
+import static driver.WebDriverCreator.createWebDriver;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.junit.Assert.assertEquals;
 
 public class CheckRegistrationTest {
-
-    private static final String CHOICE_BROWSER = String.valueOf(ChoiceBrowserExamples.YANDEX);
-
+    WebDriver driver;
     private static final String INCORRECT_PASSWORD_TEXT = "Некорректный пароль";
     private UserApi userApi;
     private String acessToken;
 
     private static final boolean keySuccessExpected = true;
 
-    @Rule
-    public Browser browser = new Browser();
-
     @Before
     public void setUp() {
-        RestAssured.baseURI= UrlConstants.STELLAR_BURGERS_URL;
         WebDriverManager.chromedriver().setup();
     }
     @After
     public void tearDown() {
         //Удаление пользователя
         userApi.deleteUser(acessToken);
+        driver.quit();
     }
 
     @Test
@@ -53,7 +44,7 @@ public class CheckRegistrationTest {
         String userEmail = faker.internet().safeEmailAddress();
         String userPassword = faker.internet().password(6, 7);
 
-        WebDriver driver = browser.getWebDriver(CHOICE_BROWSER);
+        driver = createWebDriver();
 
         MainPage mainPage = new MainPage(driver);
         mainPage.open()
@@ -90,7 +81,7 @@ public class CheckRegistrationTest {
         String userEmail = faker.internet().safeEmailAddress();
         String userPassword = faker.lorem().characters(5);
 
-        WebDriver driver = browser.getWebDriver(CHOICE_BROWSER);
+        driver = createWebDriver();
 
         MainPage mainPage = new MainPage(driver);
         mainPage.open()

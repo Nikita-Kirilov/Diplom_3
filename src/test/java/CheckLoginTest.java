@@ -1,16 +1,11 @@
 import api.UserApi;
 import apidata.User;
-import changebrowser.Browser;
-import changebrowser.ChoiceBrowserExamples;
 import com.github.javafaker.Faker;
-import constants.UrlConstants;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Description;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import pageobject.AuthorizationPage;
@@ -18,29 +13,26 @@ import pageobject.ForgotPasswordPage;
 import pageobject.MainPage;
 import pageobject.RegistrationPage;
 
+import static driver.WebDriverCreator.createWebDriver;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.junit.Assert.assertEquals;
 
 public class CheckLoginTest {
-    private static final String CHOICE_BROWSER = String.valueOf(ChoiceBrowserExamples.YANDEX);
-
+    WebDriver driver;
     private static final String ORDER_BUTTON_TEXT = "Оформить заказ";
 
     private UserApi userApi;
     private String acessToken;
 
-    @Rule
-    public Browser browser = new Browser();
-
     @Before
     public void setUp() {
-        RestAssured.baseURI= UrlConstants.STELLAR_BURGERS_URL;
         WebDriverManager.chromedriver().setup();
     }
     @After
     public void tearDown() {
         //Удаление пользователя
         userApi.deleteUser(acessToken);
+        driver.quit();
     }
 
     @Test
@@ -62,7 +54,7 @@ public class CheckLoginTest {
         acessToken = acessToken.substring(7);
         assertEquals("Неверный статус код", SC_OK, response.statusCode());
 
-        WebDriver driver = browser.getWebDriver(CHOICE_BROWSER);
+        driver = createWebDriver();
 
         MainPage mainPage = new MainPage(driver);
         mainPage.open()
@@ -97,7 +89,7 @@ public class CheckLoginTest {
         acessToken = acessToken.substring(7);
         assertEquals("Неверный статус код", SC_OK, response.statusCode());
 
-        WebDriver driver = browser.getWebDriver(CHOICE_BROWSER);
+        driver = createWebDriver();
 
         MainPage mainPage = new MainPage(driver);
         mainPage.open()
@@ -132,7 +124,7 @@ public class CheckLoginTest {
         acessToken = acessToken.substring(7);
         assertEquals("Неверный статус код", SC_OK, response.statusCode());
 
-        WebDriver driver = browser.getWebDriver(CHOICE_BROWSER);
+        driver = createWebDriver();
 
         MainPage mainPage = new MainPage(driver);
         mainPage.open()
@@ -174,7 +166,7 @@ public class CheckLoginTest {
         acessToken = acessToken.substring(7);
         assertEquals("Неверный статус код", SC_OK, response.statusCode());
 
-        WebDriver driver = browser.getWebDriver(CHOICE_BROWSER);
+        driver = createWebDriver();
 
         MainPage mainPage = new MainPage(driver);
         mainPage.open()

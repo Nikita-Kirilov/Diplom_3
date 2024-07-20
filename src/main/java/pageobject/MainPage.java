@@ -1,9 +1,11 @@
 package pageobject;
 
-import constants.UrlConstants;
+import config.AppConfig;
 import io.qameta.allure.Step;
+import org.aeonbits.owner.ConfigFactory;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -11,7 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 
 public class MainPage {
-
+    private AppConfig appConfig = ConfigFactory.create(AppConfig.class);
     private WebDriver webDriver;
 
     private String numberOfIngredients;
@@ -26,15 +28,16 @@ public class MainPage {
 
     private By logoButton = org.openqa.selenium.By.xpath(".//div[@class='AppHeader_header__logo__2D0X2']/a");
 
-    private By burgerIngredientsButton = org.openqa.selenium.By.xpath(".//section[@class='BurgerIngredients_ingredients__1N8v2']/div/div");
+    private By burgerIngredientsButton = org.openqa.selenium.By.xpath(".//div[@class='tab_tab__1SPyG tab_tab_type_current__2BEPc pt-4 pr-10 pb-4 pl-10 noselect']/span");
 
     private By burgerTitleNameIngredientInContainer = org.openqa.selenium.By.xpath(".//div[@class='BurgerIngredients_ingredients__menuContainer__Xu3Mo']/h2");
+
     public MainPage(WebDriver webDriver) {
         this.webDriver = webDriver;
     }
 
     public MainPage open() {
-        webDriver.get(UrlConstants.STELLAR_BURGERS_URL);
+        webDriver.get(appConfig.baseUrl());
         return this;
     }
     @Step("Клик на кнопку \"Личный кабинет\" в шапке сайта")
@@ -74,16 +77,16 @@ public class MainPage {
         Assert.assertEquals(textTitleOrderExpected,textTitleOrderActual);
     }
 
-    @Step("Клик на элемент ингридиентов")
-    public void clickTransitionByIngredients(int numberOfIngredients) {
-        List<WebElement> calendarDateList = webDriver.findElements(burgerIngredientsButton);
-        calendarDateList.get(numberOfIngredients).click();
+    @Step("Скролл до определенного заголовка названия ингридиентов")
+    public void transitionToElementIngredients(int numberOfIngredients) {
+        List<WebElement> ingredientsTitleNameList = webDriver.findElements(burgerTitleNameIngredientInContainer);
+        WebElement element = ingredientsTitleNameList.get(numberOfIngredients);
+        ((JavascriptExecutor)webDriver).executeScript("arguments[0].scrollIntoView();", element);
     }
 
     @Step("Проверка перехода к определенному элементу ингридиентов в конструкторе")
-    public void checkTransitionByIngredientsNameInContainer(int numberOfIngredients, String nameOfIngredientTitleInContainerExpected) {
-        List<WebElement> calendarDateList = webDriver.findElements(burgerTitleNameIngredientInContainer);
-        String actualburgerTitleNameIngredientText= calendarDateList.get(numberOfIngredients).getText();
+    public void checkTransitionByIngredientsNameInContainerOne(String nameOfIngredientTitleInContainerExpected) {
+        String actualburgerTitleNameIngredientText= webDriver.findElement(burgerIngredientsButton).getText();
         Assert.assertEquals(nameOfIngredientTitleInContainerExpected,actualburgerTitleNameIngredientText);
     }
 }
